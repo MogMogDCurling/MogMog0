@@ -294,19 +294,47 @@ void myMT1(const GAMESTATE* const gs, SHOTVEC *vec_ret) {
 	Montecarlo *mc12 = new Montecarlo(gs, shotCount, vec, weight, better);
 	Montecarlo *mc13 = new Montecarlo(gs, shotCount, vec, weight, better);
 	Montecarlo *mc14 = new Montecarlo(gs, shotCount, vec, weight, better);
+	Montecarlo *mc15 = new Montecarlo(gs, shotCount, vec, weight, better);
+	Montecarlo *mc16 = new Montecarlo(gs, shotCount, vec, weight, better);
+	Montecarlo *mc17 = new Montecarlo(gs, shotCount, vec, weight, better);
+	Montecarlo *mc18 = new Montecarlo(gs, shotCount, vec, weight, better);
+	Montecarlo *mc19 = new Montecarlo(gs, shotCount, vec, weight, better);
+	Montecarlo *mc1a = new Montecarlo(gs, shotCount, vec, weight, better);
+	Montecarlo *mc1b = new Montecarlo(gs, shotCount, vec, weight, better);
+	Montecarlo *mc1c = new Montecarlo(gs, shotCount, vec, weight, better);
 
 	mc11->timeLimit = mc12->timeLimit = mc13->timeLimit = mc14->timeLimit =
+		(clock_t)(remainingTimePart1 * timeLimitPercent[gs->ShotNum] / 100);// 
+	mc15->timeLimit = mc16->timeLimit = mc17->timeLimit = mc18->timeLimit =
+		(clock_t)(remainingTimePart1 * timeLimitPercent[gs->ShotNum] / 100);// 
+	mc19->timeLimit = mc1a->timeLimit = mc1b->timeLimit = mc1c->timeLimit =
 		(clock_t)(remainingTimePart1 * timeLimitPercent[gs->ShotNum] / 100);// 
 
 	thread thread11(bind(executeMontecarlo1, mc11));
 	thread thread12(bind(executeMontecarlo1, mc12));
 	thread thread13(bind(executeMontecarlo1, mc13));
 	thread thread14(bind(executeMontecarlo1, mc14));
+	thread thread15(bind(executeMontecarlo1, mc15));
+	thread thread16(bind(executeMontecarlo1, mc16));
+	thread thread17(bind(executeMontecarlo1, mc17));
+	thread thread18(bind(executeMontecarlo1, mc18));
+	thread thread19(bind(executeMontecarlo1, mc19));
+	thread thread1a(bind(executeMontecarlo1, mc1a));
+	thread thread1b(bind(executeMontecarlo1, mc1b));
+	thread thread1c(bind(executeMontecarlo1, mc1c));
 
 	thread11.join();
 	thread12.join();
 	thread13.join();
 	thread14.join();
+	thread15.join();
+	thread16.join();
+	thread17.join();
+	thread18.join();
+	thread19.join();
+	thread1a.join();
+	thread1b.join();
+	thread1c.join();
 
 
 	for (int k = 0; k < shotCount; k++) {
@@ -314,6 +342,14 @@ void myMT1(const GAMESTATE* const gs, SHOTVEC *vec_ret) {
 		estimate[k] += mc12->estimate[k];
 		estimate[k] += mc13->estimate[k];
 		estimate[k] += mc14->estimate[k];
+		estimate[k] += mc15->estimate[k];
+		estimate[k] += mc16->estimate[k];
+		estimate[k] += mc17->estimate[k];
+		estimate[k] += mc18->estimate[k];
+		estimate[k] += mc19->estimate[k];
+		estimate[k] += mc1a->estimate[k];
+		estimate[k] += mc1b->estimate[k];
+		estimate[k] += mc1c->estimate[k];
 	}
 
 	clock_t lap2 = clock();
@@ -332,23 +368,51 @@ void myMT1(const GAMESTATE* const gs, SHOTVEC *vec_ret) {
 	Montecarlo *mc22 = new Montecarlo(gs, shotCount, vec, weight, better);
 	Montecarlo *mc23 = new Montecarlo(gs, shotCount, vec, weight, better);
 	Montecarlo *mc24 = new Montecarlo(gs, shotCount, vec, weight, better);
+	Montecarlo *mc25 = new Montecarlo(gs, shotCount, vec, weight, better);
+	Montecarlo *mc26 = new Montecarlo(gs, shotCount, vec, weight, better);
+	Montecarlo *mc27 = new Montecarlo(gs, shotCount, vec, weight, better);
+	Montecarlo *mc28 = new Montecarlo(gs, shotCount, vec, weight, better);
+	Montecarlo *mc29 = new Montecarlo(gs, shotCount, vec, weight, better);
+	Montecarlo *mc2a = new Montecarlo(gs, shotCount, vec, weight, better);
+	Montecarlo *mc2b = new Montecarlo(gs, shotCount, vec, weight, better);
+	Montecarlo *mc2c = new Montecarlo(gs, shotCount, vec, weight, better);
 
 	if (4 <= gs->ShotNum && gs->ShotNum < 12) {
 		mc21->timeLimit = mc22->timeLimit = mc23->timeLimit = mc24->timeLimit = (clock_t)(remainingTimePart2 * 6 / 5);// 
+		mc25->timeLimit = mc26->timeLimit = mc27->timeLimit = mc28->timeLimit = (clock_t)(remainingTimePart2 * 6 / 5);// 
+		mc29->timeLimit = mc2a->timeLimit = mc2b->timeLimit = mc2c->timeLimit = (clock_t)(remainingTimePart2 * 6 / 5);// 
 	}
 	else {
 		mc21->timeLimit = mc22->timeLimit = mc23->timeLimit = mc24->timeLimit = (clock_t)(remainingTimePart2 * 4 / 5);// 
+		mc25->timeLimit = mc26->timeLimit = mc27->timeLimit = mc28->timeLimit = (clock_t)(remainingTimePart2 * 4 / 5);// 
+		mc29->timeLimit = mc2a->timeLimit = mc2b->timeLimit = mc2c->timeLimit = (clock_t)(remainingTimePart2 * 4 / 5);// 
 	}
 
 	thread thread21(bind(executeMontecarlo2, mc21));
 	thread thread22(bind(executeMontecarlo2, mc22));
 	thread thread23(bind(executeMontecarlo2, mc23));
 	thread thread24(bind(executeMontecarlo2, mc24));
+	thread thread25(bind(executeMontecarlo2, mc25));
+	thread thread26(bind(executeMontecarlo2, mc26));
+	thread thread27(bind(executeMontecarlo2, mc27));
+	thread thread28(bind(executeMontecarlo2, mc28));
+	thread thread29(bind(executeMontecarlo2, mc29));
+	thread thread2a(bind(executeMontecarlo2, mc2a));
+	thread thread2b(bind(executeMontecarlo2, mc2b));
+	thread thread2c(bind(executeMontecarlo2, mc2c));
 
 	thread21.join();
 	thread22.join();
 	thread23.join();
 	thread24.join();
+	thread25.join();
+	thread26.join();
+	thread27.join();
+	thread28.join();
+	thread29.join();
+	thread2a.join();
+	thread2b.join();
+	thread2c.join();
 
 	for (int k = 0; k < shotCount; k++) {
 		if (better[k] < 5) {
