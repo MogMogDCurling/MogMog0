@@ -36,3 +36,5 @@
 +.iobj
 *.ipdb
 *.pdb
+
+.vs/*
