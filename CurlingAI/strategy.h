@@ -46,5 +46,5 @@ void getBestShot(const GAMESTATE* const gs, SHOTVEC *vec_ret);
 #define OFFENSIVE_WEIGHT 0.0f
 
 #define MY_RANDOM 0.145f
-#define OPP_RANDOM 0.0f
+#define OPP_RANDOM 0.07f
 

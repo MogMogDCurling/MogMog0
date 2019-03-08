@@ -14,8 +14,10 @@ bool EasyCanShotReach(const GAMESTATE* const gs, SHOTPOS pos) {
 	for (int stone = 0; stone < 16; stone++) {
 		float xx = gs->body[stone][0];
 		float yy = gs->body[stone][1];
-		float incline_y = HOUSE_R * 1.5f;
-		float incline_x = 2.0f * STONE_R;
+		//float incline_y = HOUSE_R * 1.5f;
+		//float incline_x = 2.0f * STONE_R;
+		float incline_y = HOUSE_R * 1.0f;
+		float incline_x = 0.0f * STONE_R;
 		float dx = (TEE_X - pos.x) * incline_y / (41.28f - pos.y);
 		if (xx > 0.0 && yy > 0.0) {
 			if (pos.angle) {

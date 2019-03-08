@@ -11,7 +11,7 @@
 using namespace std;
 
 
-const unsigned int shotVariations = 100;
+const unsigned int shotVariations = 200;
 
 class Montecarlo {
 public:
@@ -167,9 +167,8 @@ void myMT1(const GAMESTATE* const gs, SHOTVEC *vec_ret) {
 	int remainingShot = 8 - (int)(gs->ShotNum / 2);
 	int remainingEnd = gs->LastEnd - gs->CurEnd;
 	if (remainingShot == 8) {
-		remainingTimePart1 = (clock_t)(remainingTime / 5 * 3 / remainingEnd / 8);
-		remainingTimePart2 = (clock_t)(remainingTime / 5 * 2 / remainingEnd / 8);
-		//remainingTimePart3 = (clock_t)(remainingTime / 5 / remainingEnd / 8);
+		remainingTimePart1 = (clock_t)(remainingTime / 10 * 7 / remainingEnd / 8);
+		remainingTimePart2 = (clock_t)(remainingTime / 10 * 3 / remainingEnd / 8);
 	}
 
 
@@ -205,6 +204,7 @@ void myMT1(const GAMESTATE* const gs, SHOTVEC *vec_ret) {
 		weight[shotCount] = 0.0f;
 		shotCount++;
 	}
+	std::cerr << "n";
 	for (int stone = gs->ShotNum - 1; stone >= 0; stone--) {
 		if (gs->body[stone][0] > 0.0 && gs->body[stone][1] > 0.0) {
 			for (int i = 0; i < 6; i++) {
@@ -260,6 +260,7 @@ void myMT1(const GAMESTATE* const gs, SHOTVEC *vec_ret) {
 		}
 	}
 	for (int i = 0; i < 4; i++) {// 6->4
+		std::cerr << "o";
 		if (CreateDrawShot(gs, i, &(vec[shotCount]))) {
 			switch (i) {
 			case 0:shotName[shotCount] = "a draw shot to right-side of the house"; break;
@@ -272,6 +273,7 @@ void myMT1(const GAMESTATE* const gs, SHOTVEC *vec_ret) {
 		}
 	}
 	for (int i = 0; i < 2; i++) {//4->2
+		std::cerr << "w";
 		if (CreateGuardShot(gs, i, &(vec[shotCount]))) {
 			switch (i) {
 			case 0:shotName[shotCount] = "a center guard shot"; break;
@@ -281,12 +283,14 @@ void myMT1(const GAMESTATE* const gs, SHOTVEC *vec_ret) {
 			shotCount++;
 		}
 	}
+	std::cerr << " ";
 	int itsme = gs->ShotNum % 2;
 
 	for (int k = 0; k < shotCount; k++) {
 		estimate[k] = 0.0f;
 		better[k] = 0;
 	}
+	std::cerr << "t";
 
 	clock_t lap1 = clock();
 
@@ -298,16 +302,11 @@ void myMT1(const GAMESTATE* const gs, SHOTVEC *vec_ret) {
 	Montecarlo *mc16 = new Montecarlo(gs, shotCount, vec, weight, better);
 	Montecarlo *mc17 = new Montecarlo(gs, shotCount, vec, weight, better);
 	Montecarlo *mc18 = new Montecarlo(gs, shotCount, vec, weight, better);
-	Montecarlo *mc19 = new Montecarlo(gs, shotCount, vec, weight, better);
-	Montecarlo *mc1a = new Montecarlo(gs, shotCount, vec, weight, better);
-	Montecarlo *mc1b = new Montecarlo(gs, shotCount, vec, weight, better);
-	Montecarlo *mc1c = new Montecarlo(gs, shotCount, vec, weight, better);
 
+	std::cerr << "h";
 	mc11->timeLimit = mc12->timeLimit = mc13->timeLimit = mc14->timeLimit =
 		(clock_t)(remainingTimePart1 * timeLimitPercent[gs->ShotNum] / 100);// 
 	mc15->timeLimit = mc16->timeLimit = mc17->timeLimit = mc18->timeLimit =
-		(clock_t)(remainingTimePart1 * timeLimitPercent[gs->ShotNum] / 100);// 
-	mc19->timeLimit = mc1a->timeLimit = mc1b->timeLimit = mc1c->timeLimit =
 		(clock_t)(remainingTimePart1 * timeLimitPercent[gs->ShotNum] / 100);// 
 
 	thread thread11(bind(executeMontecarlo1, mc11));
@@ -318,10 +317,8 @@ void myMT1(const GAMESTATE* const gs, SHOTVEC *vec_ret) {
 	thread thread16(bind(executeMontecarlo1, mc16));
 	thread thread17(bind(executeMontecarlo1, mc17));
 	thread thread18(bind(executeMontecarlo1, mc18));
-	thread thread19(bind(executeMontecarlo1, mc19));
-	thread thread1a(bind(executeMontecarlo1, mc1a));
-	thread thread1b(bind(executeMontecarlo1, mc1b));
-	thread thread1c(bind(executeMontecarlo1, mc1c));
+
+	std::cerr << "i";
 
 	thread11.join();
 	thread12.join();
@@ -331,11 +328,8 @@ void myMT1(const GAMESTATE* const gs, SHOTVEC *vec_ret) {
 	thread16.join();
 	thread17.join();
 	thread18.join();
-	thread19.join();
-	thread1a.join();
-	thread1b.join();
-	thread1c.join();
 
+	std::cerr << "n";
 
 	for (int k = 0; k < shotCount; k++) {
 		estimate[k] = mc11->estimate[k];
@@ -346,13 +340,10 @@ void myMT1(const GAMESTATE* const gs, SHOTVEC *vec_ret) {
 		estimate[k] += mc16->estimate[k];
 		estimate[k] += mc17->estimate[k];
 		estimate[k] += mc18->estimate[k];
-		estimate[k] += mc19->estimate[k];
-		estimate[k] += mc1a->estimate[k];
-		estimate[k] += mc1b->estimate[k];
-		estimate[k] += mc1c->estimate[k];
 	}
 
 	clock_t lap2 = clock();
+	std::cerr << "k";
 
 	//‡ˆÊ‚ð‚Â‚¯‚é
 	for (int k = 0; k < shotCount; k++) {
@@ -363,6 +354,7 @@ void myMT1(const GAMESTATE* const gs, SHOTVEC *vec_ret) {
 		}
 	}
 
+	std::cerr << "i";
 	// ãˆÊ‚Ì‚¢‚­‚Â‚©‚Éi‚Á‚ÄŒJ‚è•Ô‚µ’²‚×‚éB
 	Montecarlo *mc21 = new Montecarlo(gs, shotCount, vec, weight, better);
 	Montecarlo *mc22 = new Montecarlo(gs, shotCount, vec, weight, better);
@@ -372,22 +364,17 @@ void myMT1(const GAMESTATE* const gs, SHOTVEC *vec_ret) {
 	Montecarlo *mc26 = new Montecarlo(gs, shotCount, vec, weight, better);
 	Montecarlo *mc27 = new Montecarlo(gs, shotCount, vec, weight, better);
 	Montecarlo *mc28 = new Montecarlo(gs, shotCount, vec, weight, better);
-	Montecarlo *mc29 = new Montecarlo(gs, shotCount, vec, weight, better);
-	Montecarlo *mc2a = new Montecarlo(gs, shotCount, vec, weight, better);
-	Montecarlo *mc2b = new Montecarlo(gs, shotCount, vec, weight, better);
-	Montecarlo *mc2c = new Montecarlo(gs, shotCount, vec, weight, better);
 
 	if (4 <= gs->ShotNum && gs->ShotNum < 12) {
 		mc21->timeLimit = mc22->timeLimit = mc23->timeLimit = mc24->timeLimit = (clock_t)(remainingTimePart2 * 6 / 5);// 
 		mc25->timeLimit = mc26->timeLimit = mc27->timeLimit = mc28->timeLimit = (clock_t)(remainingTimePart2 * 6 / 5);// 
-		mc29->timeLimit = mc2a->timeLimit = mc2b->timeLimit = mc2c->timeLimit = (clock_t)(remainingTimePart2 * 6 / 5);// 
 	}
 	else {
 		mc21->timeLimit = mc22->timeLimit = mc23->timeLimit = mc24->timeLimit = (clock_t)(remainingTimePart2 * 4 / 5);// 
 		mc25->timeLimit = mc26->timeLimit = mc27->timeLimit = mc28->timeLimit = (clock_t)(remainingTimePart2 * 4 / 5);// 
-		mc29->timeLimit = mc2a->timeLimit = mc2b->timeLimit = mc2c->timeLimit = (clock_t)(remainingTimePart2 * 4 / 5);// 
 	}
 
+	std::cerr << "n";
 	thread thread21(bind(executeMontecarlo2, mc21));
 	thread thread22(bind(executeMontecarlo2, mc22));
 	thread thread23(bind(executeMontecarlo2, mc23));
@@ -396,10 +383,6 @@ void myMT1(const GAMESTATE* const gs, SHOTVEC *vec_ret) {
 	thread thread26(bind(executeMontecarlo2, mc26));
 	thread thread27(bind(executeMontecarlo2, mc27));
 	thread thread28(bind(executeMontecarlo2, mc28));
-	thread thread29(bind(executeMontecarlo2, mc29));
-	thread thread2a(bind(executeMontecarlo2, mc2a));
-	thread thread2b(bind(executeMontecarlo2, mc2b));
-	thread thread2c(bind(executeMontecarlo2, mc2c));
 
 	thread21.join();
 	thread22.join();
@@ -409,20 +392,22 @@ void myMT1(const GAMESTATE* const gs, SHOTVEC *vec_ret) {
 	thread26.join();
 	thread27.join();
 	thread28.join();
-	thread29.join();
-	thread2a.join();
-	thread2b.join();
-	thread2c.join();
 
+	std::cerr << "g";
 	for (int k = 0; k < shotCount; k++) {
 		if (better[k] < 5) {
-			estimate[k] = mc21->estimate[k];
+			estimate[k] += mc21->estimate[k];
 			estimate[k] += mc22->estimate[k];
 			estimate[k] += mc23->estimate[k];
 			estimate[k] += mc24->estimate[k];
+			estimate[k] += mc25->estimate[k];
+			estimate[k] += mc26->estimate[k];
+			estimate[k] += mc27->estimate[k];
+			estimate[k] += mc28->estimate[k];
 		}
 	}
 
+	std::cerr << "." << endl;
 	clock_t lap3 = clock();
 
 	// •]‰¿‚ªˆê”Ô‚‚¢ƒVƒ‡ƒbƒg‚ð‘I‘ð‚·‚éB
