@@ -149,7 +149,6 @@ void executeMontecarlo2(Montecarlo *mc) {
 clock_t remainingTime = 210000;// total time limit
 clock_t remainingTimePart1 = 3000;
 clock_t remainingTimePart2 = 1000;
-clock_t remainingTimePart3 = 1000;
 int timeLimitPercent[16] = { 28, 28, 56, 56, 104, 104, 112, 112, 128, 128, 144, 144, 128, 128, 100, 100 };
 
 //モンテカルロをベースとしたmogmogの主部
@@ -204,7 +203,6 @@ void myMT1(const GAMESTATE* const gs, SHOTVEC *vec_ret) {
 		weight[shotCount] = 0.0f;
 		shotCount++;
 	}
-	std::cerr << "n";
 	for (int stone = gs->ShotNum - 1; stone >= 0; stone--) {
 		if (gs->body[stone][0] > 0.0 && gs->body[stone][1] > 0.0) {
 			for (int i = 0; i < 6; i++) {
@@ -260,7 +258,6 @@ void myMT1(const GAMESTATE* const gs, SHOTVEC *vec_ret) {
 		}
 	}
 	for (int i = 0; i < 4; i++) {// 6->4
-		std::cerr << "o";
 		if (CreateDrawShot(gs, i, &(vec[shotCount]))) {
 			switch (i) {
 			case 0:shotName[shotCount] = "a draw shot to right-side of the house"; break;
@@ -273,7 +270,6 @@ void myMT1(const GAMESTATE* const gs, SHOTVEC *vec_ret) {
 		}
 	}
 	for (int i = 0; i < 2; i++) {//4->2
-		std::cerr << "w";
 		if (CreateGuardShot(gs, i, &(vec[shotCount]))) {
 			switch (i) {
 			case 0:shotName[shotCount] = "a center guard shot"; break;
@@ -283,14 +279,13 @@ void myMT1(const GAMESTATE* const gs, SHOTVEC *vec_ret) {
 			shotCount++;
 		}
 	}
-	std::cerr << " ";
+
 	int itsme = gs->ShotNum % 2;
 
 	for (int k = 0; k < shotCount; k++) {
 		estimate[k] = 0.0f;
 		better[k] = 0;
 	}
-	std::cerr << "t";
 
 	clock_t lap1 = clock();
 
@@ -303,7 +298,6 @@ void myMT1(const GAMESTATE* const gs, SHOTVEC *vec_ret) {
 	Montecarlo *mc17 = new Montecarlo(gs, shotCount, vec, weight, better);
 	Montecarlo *mc18 = new Montecarlo(gs, shotCount, vec, weight, better);
 
-	std::cerr << "h";
 	mc11->timeLimit = mc12->timeLimit = mc13->timeLimit = mc14->timeLimit =
 		(clock_t)(remainingTimePart1 * timeLimitPercent[gs->ShotNum] / 100);// 
 	mc15->timeLimit = mc16->timeLimit = mc17->timeLimit = mc18->timeLimit =
@@ -318,8 +312,6 @@ void myMT1(const GAMESTATE* const gs, SHOTVEC *vec_ret) {
 	thread thread17(bind(executeMontecarlo1, mc17));
 	thread thread18(bind(executeMontecarlo1, mc18));
 
-	std::cerr << "i";
-
 	thread11.join();
 	thread12.join();
 	thread13.join();
@@ -328,8 +320,6 @@ void myMT1(const GAMESTATE* const gs, SHOTVEC *vec_ret) {
 	thread16.join();
 	thread17.join();
 	thread18.join();
-
-	std::cerr << "n";
 
 	for (int k = 0; k < shotCount; k++) {
 		estimate[k] = mc11->estimate[k];
@@ -343,7 +333,6 @@ void myMT1(const GAMESTATE* const gs, SHOTVEC *vec_ret) {
 	}
 
 	clock_t lap2 = clock();
-	std::cerr << "k";
 
 	//順位をつける
 	for (int k = 0; k < shotCount; k++) {
@@ -354,7 +343,6 @@ void myMT1(const GAMESTATE* const gs, SHOTVEC *vec_ret) {
 		}
 	}
 
-	std::cerr << "i";
 	// 上位のいくつかに絞って繰り返し調べる。
 	Montecarlo *mc21 = new Montecarlo(gs, shotCount, vec, weight, better);
 	Montecarlo *mc22 = new Montecarlo(gs, shotCount, vec, weight, better);
@@ -374,7 +362,6 @@ void myMT1(const GAMESTATE* const gs, SHOTVEC *vec_ret) {
 		mc25->timeLimit = mc26->timeLimit = mc27->timeLimit = mc28->timeLimit = (clock_t)(remainingTimePart2 * 4 / 5);// 
 	}
 
-	std::cerr << "n";
 	thread thread21(bind(executeMontecarlo2, mc21));
 	thread thread22(bind(executeMontecarlo2, mc22));
 	thread thread23(bind(executeMontecarlo2, mc23));
@@ -393,10 +380,9 @@ void myMT1(const GAMESTATE* const gs, SHOTVEC *vec_ret) {
 	thread27.join();
 	thread28.join();
 
-	std::cerr << "g";
 	for (int k = 0; k < shotCount; k++) {
 		if (better[k] < 5) {
-			estimate[k] += mc21->estimate[k];
+			estimate[k] = mc21->estimate[k];
 			estimate[k] += mc22->estimate[k];
 			estimate[k] += mc23->estimate[k];
 			estimate[k] += mc24->estimate[k];
@@ -407,13 +393,15 @@ void myMT1(const GAMESTATE* const gs, SHOTVEC *vec_ret) {
 		}
 	}
 
-	std::cerr << "." << endl;
 	clock_t lap3 = clock();
 
 	// 評価が一番高いショットを選択する。
 	int maxK = 0;
 	float max = -100000.0;
 	for (int k = 0; k < shotCount; k++) {
+		if (better[k] < 5) {
+			std::cerr << " I considered " << shotName[k] << ". (" << (estimate[k]/ totalRepeatNumber2) << " pt)" << endl;
+		}
 		if (better[k] < 5 && max < estimate[k]) {
 			max = estimate[k];
 			maxK = k;
