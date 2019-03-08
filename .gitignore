@@ -38,3 +38,4 @@
 *.pdb
 
 .vs/*
+CurlingAI/Release/MogMog.tlog/*
